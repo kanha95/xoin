@@ -1,0 +1,66 @@
+# --- Bytecode & caches ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+*.egg
+MANIFEST
+
+# --- Virtual environments ---
+.venv/
+venv/
+ENV/
+env/
+
+# --- Packaging / build (hatch, setuptools, poetry, pip-tools) ---
+dist/
+build/
+pip-wheel-metadata/
+*.manifest
+*.spec
+sdist/
+wheels/
+
+# --- Test & coverage ---
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+
+# --- Type checkers & linters ---
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+.ruff_cache/
+
+# --- Secrets & local env (keep `.env.example` anywhere in the tree) ---
+.env
+.env.*
+!.env.example
+!**/.env.example
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- Editors / OS ---
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# --- Optional: local tooling (uncomment if you use them) ---
+# .vscode/
+# *.code-workspace
+
+tests
+TEST_REPORT.md

@@ -1,0 +1,10 @@
+template: |
+  Extract the user profile from the text below.
+
+  Input:
+  {{user_query}}
+
+  Return only JSON.
+defaults:
+  user_query: ""
+description: Extract user info from free text
