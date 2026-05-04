@@ -145,6 +145,48 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
+**Sample output (live APIs)** — captured by running the snippet above with keys from `examples/.env` (`set -a && source examples/.env && set +a`). Exact models, token counts, and response IDs vary per request; the `raw` field from `GenResult.model_dump()` is omitted here for readability.
+
+OpenAI (`gpt-4o-mini`, structured native schema):
+
+```json
+{
+  "provider": "openai",
+  "model": "gpt-4o-mini-2024-07-18",
+  "text": "{\"name\":\"Ava\",\"age\":31}",
+  "data": {
+    "name": "Ava",
+    "age": 31
+  },
+  "usage": {
+    "input_tokens": 72,
+    "output_tokens": 10,
+    "total_tokens": 82
+  },
+  "finish_reason": "stop"
+}
+```
+
+DeepSeek — same `UserProfile` pattern, from `python examples/deepseek_structured_output.py`:
+
+```json
+{
+  "provider": "deepseek",
+  "model": "deepseek-v4-flash",
+  "text": "{\"name\": \"Kabir\", \"age\": 33}",
+  "data": {
+    "name": "Kabir",
+    "age": 33
+  },
+  "usage": {
+    "input_tokens": 40,
+    "output_tokens": 13,
+    "total_tokens": 53
+  },
+  "finish_reason": "stop"
+}
+```
+
 Why this works:
 
 - one prompt  

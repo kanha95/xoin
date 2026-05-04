@@ -44,6 +44,10 @@ python examples/anthropic_structured_output.py
 
 Windows PowerShell users can mirror loading via `$Env:OPENAI_API_KEY="..."` or a `.env` loader.
 
+## Sample outputs (real providers)
+
+The root **`README.md`** includes **live-captured** `GenResult` JSON (OpenAI Quick Start + DeepSeek structured example), produced after loading `examples/.env`. Reproduce locally with the same env setup; omit printing `raw` in docs if you only need `data` / `usage`.
+
 ## What lives here
 
 | File | Mirrors JS |
