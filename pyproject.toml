@@ -32,7 +32,9 @@ templates = ["pyyaml>=6,<7"]
 examples = ["pyyaml>=6,<7"]
 
 [project.urls]
-Homepage = "https://github.com/xoin/xoin-py"
+Homepage = "https://github.com/kanha95/xoin"
+Repository = "https://github.com/kanha95/xoin"
+Issues = "https://github.com/kanha95/xoin/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/xoin"]
