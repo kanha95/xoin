@@ -24,7 +24,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from xoin import StructuredSpec, Xoin
+from xoin import StructuredOutput, Xoin
 from xoin.providers import AnthropicProvider, OpenAIProvider
 
 
@@ -57,7 +57,7 @@ async def main() -> None:
             provider="openai",
             provider_order=["anthropic"],
             prompt="Say hello to the engineering team in one polished sentence.",
-            structured=StructuredSpec(
+            structured=StructuredOutput(
                 response_model=Handshake,
                 name="handshake",
                 mode="prompted",

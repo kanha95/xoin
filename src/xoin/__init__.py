@@ -10,7 +10,7 @@ from xoin.types import (
     GenResult,
     PriorityProviderTarget,
     RetryCfg,
-    StructuredSpec,
+    StructuredOutput,
     TemplateDefinition,
     Usage,
 )
@@ -20,7 +20,7 @@ __all__ = [
     "create_xoin",
     "errors",
     "ChatMessage",
-    "StructuredSpec",
+    "StructuredOutput",
     "GenManyTarget",
     "PriorityProviderTarget",
     "GenResult",

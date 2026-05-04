@@ -48,8 +48,8 @@ async def main() -> None:
         # asyncio.gather happens internally—your code awaits once.
         results = await xoin.generate_many(
             targets=[
-                GenManyTarget(provider="openai"),
-                GenManyTarget(provider="anthropic"),
+                GenManyTarget(provider="openai", model="gpt-4o-mini"),
+                GenManyTarget(provider="anthropic", model="claude-sonnet-4-20250514"),
             ],
             prompt=prompt,
         )

@@ -26,7 +26,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from xoin import StructuredSpec, Xoin
+from xoin import StructuredOutput, Xoin
 from xoin.providers import DeepSeekProvider
 
 
@@ -51,7 +51,7 @@ async def main() -> None:
         result = await xoin.generate(
             provider="deepseek",
             prompt='Extract a JSON object from: "Kabir is 33 years old."',
-            structured=StructuredSpec(
+            structured=StructuredOutput(
                 response_model=UserProfile,
                 name="user_profile",
                 mode="auto",

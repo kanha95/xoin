@@ -34,7 +34,7 @@ from xoin.types import (
     GenResult,
     PriorityProviderTarget,
     RetryCfg,
-    StructuredSpec,
+    StructuredOutput,
     TemplateDefinition,
 )
 from xoin.providers.base import (
@@ -102,7 +102,7 @@ class Xoin:
         variables: Mapping[str, Any] | None = None,
         system: str | None = None,
         messages: Sequence[ChatMessage | Mapping[str, Any]] | None = None,
-        structured: StructuredSpec | Mapping[str, Any] | None = None,
+        structured: StructuredOutput | Mapping[str, Any] | None = None,
         temperature: float | None = None,
         max_tokens: int | None = None,
         timeout_ms: int | None = None,
@@ -132,7 +132,7 @@ class Xoin:
                 async def run(
                     provider_name: str = pname,
                     explicit_model: str | None = target_model,
-                ) -> GenResult:
+                ) -> GenResult: 
                     # Per-target model overrides the request-level ``model`` exactly like xoin-js.
                     requested_model = model if explicit_model is None else explicit_model
                     return await self._generate_provider(
@@ -166,7 +166,7 @@ class Xoin:
         variables: Mapping[str, Any] | None = None,
         system: str | None = None,
         messages: Sequence[ChatMessage | Mapping[str, Any]] | None = None,
-        structured: StructuredSpec | Mapping[str, Any] | None = None,
+        structured: StructuredOutput | Mapping[str, Any] | None = None,
         temperature: float | None = None,
         max_tokens: int | None = None,
         timeout_ms: int | None = None,
@@ -328,7 +328,7 @@ class Xoin:
         prompt: str | None,
         system: str | None,
         messages: Sequence[ChatMessage | Mapping[str, Any]] | None,
-        structured: StructuredSpec | None,
+        structured: StructuredOutput | None,
         temperature: float | None,
         max_tokens: int | None,
         timeout: float | None,
@@ -346,7 +346,6 @@ class Xoin:
         native = _native_structured(structured, prov.capabilities)
         msgs = _build_messages(messages, system, structured, native, prompt)
         response_format = _provider_chat_response_format(structured, prov.capabilities, native)
-
         completion = ChatCompletionParameters(
             model=mdl,
             messages=msgs,
@@ -357,12 +356,11 @@ class Xoin:
             timeout=timeout,
         )
         try:
-            raw = await prov.generate(self._client, completion)
+            raw = await prov.generate(self._client, completion) 
         except ProviderExecutionError:
             raise
         except Exception as e:
             raise ProviderExecutionError(f"{pname} failed: {e}", pname, mdl) from e
-
         data = None
         if structured:
             try:
@@ -414,18 +412,18 @@ def _cancel_if_requested(signal: Any) -> None:
         raise asyncio.CancelledError()
 
 
-def _effective_json_schema(spec: StructuredSpec) -> dict[str, Any]:
+def _effective_json_schema(spec: StructuredOutput) -> dict[str, Any]:
     if spec.json_schema is not None:
         return spec.json_schema
     return response_json_schema(spec.response_model)
 
 
-def _coerce_structured(s: StructuredSpec | Mapping[str, Any] | None) -> StructuredSpec | None:
+def _coerce_structured(s: StructuredOutput | Mapping[str, Any] | None) -> StructuredOutput | None:
     if s is None:
         return None
-    if isinstance(s, StructuredSpec):
+    if isinstance(s, StructuredOutput):
         return s
-    return StructuredSpec.model_validate(s)
+    return StructuredOutput.model_validate(s)
 
 
 def _coerce_many_target(value: GenManyTarget | Mapping[str, Any]) -> GenManyTarget:
@@ -463,7 +461,7 @@ async def _with_retry(factory: Callable[[], Awaitable[T]], cfg: RetryCfg) -> T:
                 await asyncio.sleep(wait)
 
 
-def _native_structured(spec: StructuredSpec | None, caps: Capabilities) -> bool:
+def _native_structured(spec: StructuredOutput | None, caps: Capabilities) -> bool:
     if not spec:
         return False
     mode = spec.mode
@@ -478,7 +476,7 @@ def _native_structured(spec: StructuredSpec | None, caps: Capabilities) -> bool:
 
 
 def _provider_chat_response_format(
-    spec: StructuredSpec | None,
+    spec: StructuredOutput | None,
     caps: Capabilities,
     native: bool,
 ) -> PlainTextResponseFormat | JsonObjectResponseFormat | JsonSchemaResponseFormat | None:
@@ -500,7 +498,7 @@ def _provider_chat_response_format(
 def _build_messages(
     messages: Sequence[ChatMessage | Mapping[str, Any]] | None,
     system: str | None,
-    structured: StructuredSpec | None,
+    structured: StructuredOutput | None,
     native: bool,
     prompt: str | None,
 ) -> list[ChatMessage]:

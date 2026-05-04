@@ -30,7 +30,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from xoin import StructuredSpec, Xoin
+from xoin import StructuredOutput, Xoin
 from xoin.providers import OpenAIProvider
 
 
@@ -62,7 +62,7 @@ async def main() -> None:
             variables={
                 "user_query": "Nina is 28 years old and lives in Pune.",
             },
-            structured=StructuredSpec(
+            structured=StructuredOutput(
                 response_model=UserProfile,
                 name="user_profile",
                 mode="auto",

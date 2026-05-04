@@ -25,7 +25,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from xoin import StructuredSpec, Xoin
+from xoin import StructuredOutput, Xoin
 from xoin.providers import AnthropicProvider, OpenAIProvider
 from xoin.providers.base import Capabilities
 from xoin.types import PriorityProviderTarget, RetryCfg
@@ -77,7 +77,7 @@ async def main() -> None:
             ],
             retry=RetryCfg(retries=1, delay_ms=250, backoff_multiplier=2.0),
             prompt=prompt,
-            structured=StructuredSpec(
+            structured=StructuredOutput(
                 response_model=OrderSummary,
                 name="order_summary",
                 mode="auto",

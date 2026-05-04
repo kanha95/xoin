@@ -23,7 +23,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from xoin import StructuredSpec, Xoin
+from xoin import StructuredOutput, Xoin
 from xoin.providers import MistralProvider
 
 
@@ -48,7 +48,7 @@ async def main() -> None:
         result = await xoin.generate(
             provider="mistral",
             prompt='Extract a JSON object from: "Nina is 28 years old."',
-            structured=StructuredSpec(
+            structured=StructuredOutput(
                 response_model=UserProfile,
                 name="user_profile",
                 mode="auto",

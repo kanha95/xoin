@@ -24,7 +24,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from xoin import StructuredSpec, TemplateDefinition, Xoin
+from xoin import StructuredOutput, TemplateDefinition, Xoin
 from xoin.providers import OpenAIProvider
 
 
@@ -59,7 +59,7 @@ async def main() -> None:
             variables={
                 "text": "Ravi is 34 years old.",
             },
-            structured=StructuredSpec(
+            structured=StructuredOutput(
                 response_model=UserProfile,
                 name="user_profile",
                 mode="auto",

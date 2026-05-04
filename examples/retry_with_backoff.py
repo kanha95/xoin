@@ -21,7 +21,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from xoin import StructuredSpec, Xoin
+from xoin import StructuredOutput, Xoin
 from xoin.providers import OpenAIProvider
 from xoin.types import RetryCfg
 
@@ -49,7 +49,7 @@ async def main() -> None:
         result = await xoin.generate(
             provider="openai",
             prompt='Extract a JSON object from: "Meera is 29 years old."',
-            structured=StructuredSpec(
+            structured=StructuredOutput(
                 response_model=UserProfile,
                 name="user_profile",
                 mode="auto",

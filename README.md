@@ -43,7 +43,7 @@ Async-first, minimal dependencies (**httpx**, **pydantic**). Sister library to t
 - [API Overview](#api-overview)
 - [`Xoin` / `create_xoin` configuration](#xoin--create_xoin-configuration)
 - [`generate` parameters](#generate-parameters)
-- [`StructuredSpec` (structured output)](#structuredspec-structured-output)
+- [`StructuredOutput` (structured output)](#structuredspec-structured-output)
 - [Schema examples (Pydantic)](#schema-examples-pydantic)
 - [Retry and fallback strategy](#retry-and-fallback-strategy)
 - [`embed` parameters](#embed-parameters)
@@ -78,7 +78,7 @@ pip install xoin-py
 Import the package as **`xoin`** (distribution name on PyPI is **`xoin-py`**):
 
 ```python
-from xoin import Xoin, StructuredSpec
+from xoin import Xoin, StructuredOutput
 from xoin.providers import OpenAIProvider
 ```
 
@@ -114,7 +114,7 @@ import os
 
 from pydantic import BaseModel
 
-from xoin import StructuredSpec, Xoin
+from xoin import StructuredOutput, Xoin
 from xoin.providers import OpenAIProvider
 
 
@@ -136,7 +136,7 @@ async def main() -> None:
         result = await xoin.generate(
             provider="openai",
             prompt='Extract a JSON object from: "Ava is 31 years old."',
-            structured=StructuredSpec(response_model=UserProfile, name="user_profile"),
+            structured=StructuredOutput(response_model=UserProfile, name="user_profile"),
         )
 
     print(result.data)
@@ -148,7 +148,7 @@ asyncio.run(main())
 Why this works:
 
 - one prompt  
-- native or prompt-based JSON depending on provider capability (`StructuredSpec.mode`)  
+- native or prompt-based JSON depending on provider capability (`StructuredOutput.mode`)  
 - **Pydantic** validates into `result.data`  
 - failures surface as typed exceptions (`xoin.errors`)
 
@@ -209,7 +209,7 @@ xoin = Xoin(
 | `generateMany` | ✅ | ✅ (`await xoin.generate_many(...)`) |
 | Priority `providerTargets` | ✅ | ✅ (`provider_targets=[PriorityProviderTarget(...)]`) |
 | `registerProvider` | ✅ | ✅ (`xoin.register_provider(...)`) |
-| Manual `jsonSchema` alongside schema | ✅ (`structured.jsonSchema`) | ✅ `StructuredSpec(json_schema=...)` accepts **`jsonSchema`** in dict input |
+| Manual `jsonSchema` alongside schema | ✅ (`structured.jsonSchema`) | ✅ `StructuredOutput(json_schema=...)` accepts **`jsonSchema`** in dict input |
 | `signal` / AbortSignal | ✅ | ✅ cooperative **`signal=`**: `asyncio.Event` (`is_set()`) or any object with **`.aborted` truthy** → raises `asyncio.CancelledError` before HTTP |
 | `metadata` passthrough | ✅ | ✅ merged shallow into outbound bodies (**`provider_options` wins** on key clashes) |
 
@@ -223,7 +223,7 @@ Register all vendor adapters on `Xoin(providers={...})`.
 
 ### 2. Structured output first
 
-Define a **`BaseModel`** and pass `StructuredSpec(response_model=...)`. Parsed output is `GenResult.data`.
+Define a **`BaseModel`** and pass `StructuredOutput(response_model=...)`. Parsed output is `GenResult.data`.
 
 ### 3. Fallback without glue
 
@@ -242,7 +242,7 @@ Prefer `async with Xoin(...) as xoin:` — closes the internal **httpx** client 
 Main exports (`from xoin import ...`):
 
 - `Xoin`, `create_xoin`
-- `StructuredSpec`, `ChatMessage`, `GenResult`, `EmbedResult`, `Usage`, `RetryCfg`
+- `StructuredOutput`, `ChatMessage`, `GenResult`, `EmbedResult`, `Usage`, `RetryCfg`
 - `GenManyTarget`, `PriorityProviderTarget`, `TemplateDefinition`
 - `render_template`, `resolve_named_template`, `load_template_file`
 - `errors` (module with exception classes)
@@ -310,7 +310,7 @@ xoin = Xoin(
 | `variables` | `Mapping[str, Any] \| None` | Values merged with template defaults (same role as JS `input`). |
 | `system` | `str \| None` | System instruction (inserted before conversation messages). |
 | `messages` | `Sequence[ChatMessage \| dict] \| None` | Chat history (`role`, `content`). |
-| `structured` | `StructuredSpec \| dict \| None` | Enables parsing + **Pydantic** validation into `GenResult.data`. |
+| `structured` | `StructuredOutput \| dict \| None` | Enables parsing + **Pydantic** validation into `GenResult.data`. |
 | `temperature` | `float \| None` | Sampling temperature. |
 | `max_tokens` | `int \| None` | Max output tokens (Anthropic defaults internally if unset). |
 | `timeout_ms` | `int \| None` | Per-request timeout override (converted to seconds for httpx). |
@@ -354,7 +354,7 @@ result = await xoin.generate(
     provider="openai",
     provider_order=["anthropic", "mistral"],
     prompt="Extract the order summary from the customer message.",
-    structured=StructuredSpec(response_model=OrderSummary),
+    structured=StructuredOutput(response_model=OrderSummary),
 )
 ```
 
@@ -387,9 +387,9 @@ for item in results:
 
 Runnable copies of these flows live under `examples/` (see `examples/README.md`).
 
-## `StructuredSpec` (structured output)
+## `StructuredOutput` (structured output)
 
-Use `StructuredSpec` when you want **validated** JSON mapped to a **Pydantic** model (`GenResult.data`).
+Use `StructuredOutput` when you want **validated** JSON mapped to a **Pydantic** model (`GenResult.data`).
 
 | Field | Type | What it does |
 |-------|------|----------------|
@@ -405,7 +405,7 @@ Use `StructuredSpec` when you want **validated** JSON mapped to a **Pydantic** m
 - `native` — require native capability (`prompt-only` capabilities fall back to prompts).  
 - `prompted` — always use prompt instructions + local parsing.
 
-Dict shorthand works (`StructuredSpec.model_validate`):
+Dict shorthand works (`StructuredOutput.model_validate`):
 
 ```python
 await xoin.generate(
@@ -425,7 +425,7 @@ Extraction example:
 ```python
 from pydantic import BaseModel
 
-from xoin import StructuredSpec
+from xoin import StructuredOutput
 
 
 class ShippingAddress(BaseModel):
@@ -438,7 +438,7 @@ class ShippingAddress(BaseModel):
 result = await xoin.generate(
     provider="anthropic",
     prompt='Extract the shipping address from: "Ship this to 10 Park Street, Pune 411001, India."',
-    structured=StructuredSpec(
+    structured=StructuredOutput(
         response_model=ShippingAddress,
         name="shipping_address",
         description="Normalized shipping address extracted from user input",
@@ -467,7 +467,7 @@ class User(BaseModel):
 result = await xoin.generate(
     provider="openai",
     prompt='Extract a JSON object from: "Ava is 31 years old."',
-    structured=StructuredSpec(response_model=User, name="user_profile"),
+    structured=StructuredOutput(response_model=User, name="user_profile"),
 )
 ```
 
@@ -495,7 +495,7 @@ result = await xoin.generate(
         "Extract all purchased items:\n"
         '"2 wireless mice at 25 each, 1 keyboard at 70, and 3 mouse pads at 10 each."'
     ),
-    structured=StructuredSpec(response_model=OrderLines, name="order_items"),
+    structured=StructuredOutput(response_model=OrderLines, name="order_items"),
 )
 # Parsed payload is ``result.data.root``
 ```
@@ -533,7 +533,7 @@ class CustomerOrder(BaseModel):
 result = await xoin.generate(
     provider="anthropic",
     prompt=f"Extract order details from:\n{email_text}",
-    structured=StructuredSpec(response_model=CustomerOrder, name="customer_order"),
+    structured=StructuredOutput(response_model=CustomerOrder, name="customer_order"),
 )
 ```
 
@@ -554,7 +554,7 @@ class Ticket(BaseModel):
 result = await xoin.generate(
     provider="anthropic",
     prompt="My card was charged twice and I still cannot access premium features.",
-    structured=StructuredSpec(response_model=Ticket, name="ticket_classification"),
+    structured=StructuredOutput(response_model=Ticket, name="ticket_classification"),
 )
 ```
 
@@ -575,7 +575,7 @@ class Lead(BaseModel):
 result = await xoin.generate(
     provider="openai",
     prompt=f"Extract lead details from:\n{lead_message}",
-    structured=StructuredSpec(response_model=Lead, name="lead_profile"),
+    structured=StructuredOutput(response_model=Lead, name="lead_profile"),
 )
 ```
 
@@ -607,7 +607,7 @@ EmailAction = Union[Refund, Replace]
 result = await xoin.generate(
     provider="openai",
     prompt=f"Determine the action:\n{support_message}",
-    structured=StructuredSpec(response_model=EmailAction, name="email_action"),
+    structured=StructuredOutput(response_model=EmailAction, name="email_action"),
 )
 ```
 
@@ -640,7 +640,7 @@ class NotificationEnvelope(BaseModel):
 result = await xoin.generate(
     provider="openai",
     prompt=f"Build notification payload from:\n{event_text}",
-    structured=StructuredSpec(response_model=NotificationEnvelope, name="notification_payload"),
+    structured=StructuredOutput(response_model=NotificationEnvelope, name="notification_payload"),
 )
 ```
 
@@ -667,7 +667,7 @@ result = await xoin.generate(
     provider="openai",
     retry=2,
     prompt="Extract the user profile from this message.",
-    structured=StructuredSpec(response_model=UserProfile),
+    structured=StructuredOutput(response_model=UserProfile),
 )
 ```
 
@@ -678,7 +678,7 @@ result = await xoin.generate(
     provider="openai",
     retry=RetryCfg(retries=2, delay_ms=500, backoff_multiplier=2.0),
     prompt="Extract the user profile from this message.",
-    structured=StructuredSpec(response_model=UserProfile),
+    structured=StructuredOutput(response_model=UserProfile),
 )
 ```
 
@@ -793,7 +793,7 @@ You must end up with **at least one** message after composition—otherwise **`P
 
 | Argument | What it is for |
 |----------|----------------|
-| **`structured`** | Optional [`StructuredSpec`](#structuredspec-fields). When set, the client asks the model for JSON, parses it, and validates into **`GenResult.data`**. See also [modes](#structuredspec-structured-output). |
+| **`structured`** | Optional [`StructuredOutput`](#structuredspec-fields). When set, the client asks the model for JSON, parses it, and validates into **`GenResult.data`**. See also [modes](#structuredspec-structured-output). |
 | **`temperature`** | Sampling temperature forwarded to the provider when not `None`. |
 | **`max_tokens`** | Cap on completion tokens. Anthropic defaults this internally when unset. |
 
@@ -852,7 +852,7 @@ Overwrites an existing entry if **`name`** collides.
 
 ---
 
-### `StructuredSpec` fields
+### `StructuredOutput` fields
 
 Used for validated JSON outputs (`GenResult.data`).
 
@@ -1050,7 +1050,7 @@ result = await xoin.generate(
         '"Hi, this is Sarah from Northwind. Reach me at sarah@northwind.com. '
         'Our budget is around $15k."'
     ),
-    structured=StructuredSpec(response_model=Lead, name="lead_info"),
+    structured=StructuredOutput(response_model=Lead, name="lead_info"),
 )
 ```
 
@@ -1072,7 +1072,7 @@ result = await xoin.generate(
     provider="anthropic",
     system="You classify support tickets.",
     prompt="My card was charged twice and I still cannot access premium features.",
-    structured=StructuredSpec(response_model=Ticket, name="ticket_classification"),
+    structured=StructuredOutput(response_model=Ticket, name="ticket_classification"),
 )
 ```
 
@@ -1104,7 +1104,7 @@ from typing import Literal
 
 from pydantic import BaseModel
 
-from xoin import StructuredSpec, Xoin
+from xoin import StructuredOutput, Xoin
 from xoin.providers import OpenAIProvider
 
 
@@ -1119,7 +1119,7 @@ async def main() -> None:
     ) as xoin:
         result = await xoin.generate(
             prompt='Classify sentiment of: "The onboarding was surprisingly smooth."',
-            structured=StructuredSpec(response_model=Sentiment),
+            structured=StructuredOutput(response_model=Sentiment),
         )
     print(result.data)
 
@@ -1135,7 +1135,7 @@ import os
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-from xoin import StructuredSpec, Xoin
+from xoin import StructuredOutput, Xoin
 from xoin.errors import StructuredOutputError
 from xoin.providers import OpenAIProvider
 
@@ -1162,7 +1162,7 @@ async def summarize(body: Body) -> Summary:
         result = await _xoin.generate(
             provider="openai",
             prompt=f"Summarize:\n{body.text}",
-            structured=StructuredSpec(response_model=Summary),
+            structured=StructuredOutput(response_model=Summary),
         )
     except StructuredOutputError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
@@ -1265,7 +1265,7 @@ try:
     result = await xoin.generate(
         provider="openai",
         prompt="Extract a user.",
-        structured=StructuredSpec(response_model=UserProfile),
+        structured=StructuredOutput(response_model=UserProfile),
     )
     print(result.data)
 except TemplateError:

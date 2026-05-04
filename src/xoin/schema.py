@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 
 def response_json_schema(model: type[BaseModel]) -> dict[str, Any]:
-    """JSON Schema for ``StructuredSpec`` / native provider formats.
+    """JSON Schema for ``StructuredOutput`` / native provider formats.
 
     OpenAI Chat Completions ``response_format`` with ``strict: true`` requires every
     ``object`` to set ``additionalProperties`` to ``false``. Pydantic's default schema

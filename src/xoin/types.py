@@ -28,7 +28,7 @@ class Usage(BaseModel):
     total_tokens: int | None = None
 
 
-class StructuredSpec(BaseModel):
+class StructuredOutput(BaseModel):
     """Structured JSON matching ``response_model`` (a Pydantic ``BaseModel`` subclass)."""
 
     model_config = ConfigDict(arbitrary_types_allowed=True, frozen=True, populate_by_name=True)

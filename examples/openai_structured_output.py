@@ -30,7 +30,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from xoin import StructuredSpec, Xoin
+from xoin import StructuredOutput, Xoin
 from xoin.providers import OpenAIProvider
 
 
@@ -182,7 +182,7 @@ async def main() -> None:
         result = await xoin.generate(
             provider="openai",
             prompt=PROMPT.strip(),
-            structured=StructuredSpec(
+            structured=StructuredOutput(
                 response_model=HealthcareRecord,
                 name="healthcare_record",
                 description="Structured hospital intake + invoice-shaped totals.",
