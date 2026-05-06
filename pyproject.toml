@@ -5,12 +5,12 @@ build-backend = "hatchling.build"
 [project]
 name = "xoin-py"
 version = "0.1.0"
-description = "Structured LLM responses across OpenAI, Anthropic, DeepSeek, and Mistral (async, Pydantic schemas)."
+description = "Structured LLM responses across OpenAI, Anthropic, DeepSeek, Gemini, and Mistral (async, Pydantic schemas)."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "xoin" }]
-keywords = ["llm", "openai", "anthropic", "structured-output", "pydantic"]
+keywords = ["llm", "openai", "anthropic", "gemini", "structured-output", "pydantic"]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",

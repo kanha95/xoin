@@ -18,7 +18,7 @@
   <img alt="Structured Output" src="https://img.shields.io/badge/structured%20output-pydantic%20validated-8b5cf6">
 </p>
 
-**xoin-py** is an open source **LLM API client** for **Python 3.10+** that connects to multiple AI providers — **OpenAI**, **Anthropic**, **Mistral**, **DeepSeek** — through one **consistent async API** built on **httpx**.
+**xoin-py** is an open source **LLM API client** for **Python 3.10+** that connects to multiple AI providers — **OpenAI**, **Anthropic**, **Mistral**, **DeepSeek**, **Gemini** — through one **consistent async API** built on **httpx**.
 
 It helps you ship AI features with:
 
@@ -61,7 +61,7 @@ Production **Python** backends that call **LLM APIs** quickly outgrow one-off SD
 
 You usually want:
 
-- one **multi-provider** surface for OpenAI, Anthropic, Mistral, DeepSeek  
+- one **multi-provider** surface for OpenAI, Anthropic, Mistral, DeepSeek, Gemini  
 - **structured outputs** validated with **Pydantic** before business logic runs  
 - **provider fallback** when a vendor errors or rate-limits  
 - **embeddings** on the same abstraction where supported  
@@ -204,12 +204,13 @@ Why this works:
 | `AnthropicProvider` | Claude Messages API + native tool-use structured output |
 | `MistralProvider` | Mistral chat (`json_object` structured mode) + embeddings |
 | `DeepSeekProvider` | DeepSeek chat (`json_object`); **no embeddings** in defaults |
+| `GeminiProvider` | Gemini via Google OpenAI-compatible chat endpoint (`json_object`); **no embeddings** in defaults |
 
 ```python
 import os
 
 from xoin import Xoin
-from xoin.providers import AnthropicProvider, DeepSeekProvider, MistralProvider, OpenAIProvider
+from xoin.providers import AnthropicProvider, DeepSeekProvider, GeminiProvider, MistralProvider, OpenAIProvider
 
 xoin = Xoin(
     default_provider="openai",
@@ -232,6 +233,11 @@ xoin = Xoin(
         "deepseek": DeepSeekProvider(
             api_key=os.environ["DEEPSEEK_API_KEY"],
             default_model=os.getenv("DEEPSEEK_MODEL", "deepseek-chat"),
+        ),
+        "gemini": GeminiProvider(
+            api_key=os.environ["GEMINI_API_KEY"],
+            default_model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
+            base_url=os.getenv("GEMINI_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai"),
         ),
     },
 )
@@ -300,7 +306,7 @@ For a **plain-language explanation of every argument and result field**, see **[
 
 Provider classes (`from xoin.providers import ...`):
 
-- `OpenAIProvider`, `AnthropicProvider`, `MistralProvider`, `DeepSeekProvider`
+- `OpenAIProvider`, `AnthropicProvider`, `MistralProvider`, `DeepSeekProvider`, `GeminiProvider`
 
 Protocol / internals (`xoin.providers.base`): `Provider`, `ChatCompletionParameters`, `EmbeddingParameters`, `Capabilities` — useful for **custom** adapters.
 
@@ -775,6 +781,7 @@ print(len(result.embeddings[0]))
 ```
 
 **DeepSeek** and **Anthropic** defaults **do not** expose embeddings in xoin-py — configure OpenAI or Mistral for vectors.
+**DeepSeek**, **Anthropic**, and **Gemini** defaults **do not** expose embeddings in xoin-py — configure OpenAI or Mistral for vectors.
 
 ## Parameter & types reference
 
@@ -1072,6 +1079,18 @@ When implementing **[`Provider`](#custom-providers)**:
 | `headers` | Extra HTTP headers. |
 
 **Fixed on the class:** `name = "deepseek"`, **`json-object`** structured mode, **`embeddings=False`**.
+
+### `GeminiProvider`
+
+| Parameter | Description |
+|-----------|-------------|
+| `api_key` | Gemini API key (required). |
+| `base_url` | OpenAI-compatible Gemini root; default `https://generativelanguage.googleapis.com/v1beta/openai`. |
+| `default_model` | Chat model when `model` omitted (default `gemini-2.5-flash`). |
+| `headers` | Extra HTTP headers. |
+| `capabilities` | Override structured-output and embedding support; defaults to `json-object` and `embeddings=False`. |
+
+**Fixed on the class:** `name = "gemini"`, OpenAI-compatible chat payload/response mapping, **`embeddings=False`** by default.
 
 ## Examples by use case
 

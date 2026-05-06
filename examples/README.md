@@ -56,6 +56,7 @@ The root **`README.md`** includes **live-captured** `GenResult` JSON (OpenAI Qui
 | `anthropic_structured_output.py` | `anthropic-structured-output.js` |
 | `mistral_structured_output.py` | `mistral-structured-output.js` |
 | `deepseek_structured_output.py` | `deepseek-structured-output.js` |
+| `gemini_structured_output.py` | Gemini via OpenAI-compatible endpoint |
 | `groq_openai_compatible.py` | `groq-openai-compatible.js` |
 | `embeddings_openai.py` | `embeddings-openai.js` |
 | `generate_many.py` | `generate-many.js` |
